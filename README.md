@@ -18,17 +18,15 @@ make the program more flexible in this regard.)
 
 There are plans to extend the functionality to make it even more useful:
 - support for the banking kernel's trace files, not only SMPC logs
-- watch file(s) or even folders automatic updates
+- watch file(s) or folders for automatic updates
 - improved deployment, several ideas come to mind
-
-
 
 # Development
 
 Developed in MacOS with python 3.8.
-For dependencies, see `see requirements.txt`.
+For dependencies, see `requirements.txt`.
 
-## TODOs
+## Ideas and TODOs
 
 The following is a loose list of ideas with no guarantee anywith will ever
 be actually implemented:
@@ -36,6 +34,7 @@ be actually implemented:
 - improve error handling
 - add unit tests
 - support kernel logs
+- support EBICS xml
 - file/directory watcher
 - add more options regarding plantuml service
   - start own service automatically?
