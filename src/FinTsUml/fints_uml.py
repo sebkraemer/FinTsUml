@@ -19,11 +19,11 @@ def get_parts_from_sfbk(filename):
     
     returns list of tuples in format (datetime, 0/1, message)
     '''
-    r = re.compile(r'\d+_(?P<date>\d{8,8})_\d+_(?P<send_receive_flag>[rs])r\.hbc')
+    r = re.compile(r'\d+_(?P<time>\d{8,8})_\d+_(?P<send_receive_flag>[rs])r\.hbc')
     match = r.match(os.path.split(filename)[-1])
     if match is None:
         raise RuntimeError("invalid filename pattern from " + filename)
-    dt = datetime.strptime(match['date'], '%H%M%S%f')
+    dt = datetime.strptime(match['time'], '%H%M%S%f')
     send_receive = 0 if match['send_receive_flag'] == 'r' else 1
 
     f = open(filename, 'rb')
@@ -36,13 +36,15 @@ def get_parts_from_sfpc(filename):
     binary_message = filter_hbci(f.read())
 
     #hbciRegex = re.compile(b"(?:(?:.\r?\n)*?)(?:Start HBCI message.*?\r?\n(.*?)\r?\nEnd HBCI message)+", re.DOTALL)
-    hbciRegex = re.compile(b"(?:.\r?\n)*?(?:Start HBCI message.*?\r?\n(.*?)\r?\nEnd HBCI message)+", re.DOTALL)
-    # todo: datetime, send/receive, \r vermutlich unnoetig
+    hbciRegex = re.compile(br'(?:.\r?\n)*?(?:Start HBCI message;\d+;(?P<send_receive_flag>[01]);\w+: (?P<time>[\d:.,]*);.*?\r?\n(?P<hbci>.*?)\r?\nEnd HBCI message)+', re.DOTALL)
     messages = hbciRegex.findall(binary_message)
-    messages_filtered = [filter_hbci(m) for m in messages]
+    if not messages:
+        raise RuntimeError("could not extract message data from file " + filename)
+    transaction_times = [datetime.strptime(m['time'], '%H:%M:%S.%f') for m in messages]
+    messages_filtered = [filter_hbci(m[2]) for m in messages]
     
     return list(zip(
-        [datetime.now()] * len(messages_filtered), # todo
+        transaction_times,
         [0] * len(messages_filtered), # todo
         messages_filtered)
         )
