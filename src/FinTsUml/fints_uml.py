@@ -35,12 +35,14 @@ def get_parts_from_sfpc(filename):
     f = open(filename, 'rb')
     binary_message = filter_hbci(f.read())
 
-    hbciRegex = re.compile(rb"(?:Start HBCI message.*\n(.*?)\nEnd HBCI message\n)+?", re.MULTILINE)
+    #hbciRegex = re.compile(b"(?:(?:.\r?\n)*?)(?:Start HBCI message.*?\r?\n(.*?)\r?\nEnd HBCI message)+", re.DOTALL)
+    hbciRegex = re.compile(b"(?:.\r?\n)*?(?:Start HBCI message.*?\r?\n(.*?)\r?\nEnd HBCI message)+", re.DOTALL)
+    # todo: datetime, send/receive, \r vermutlich unnoetig
     messages = hbciRegex.findall(binary_message)
     messages_filtered = [filter_hbci(m) for m in messages]
     
     return list(zip(
-        [datetime.datetime.now()] * len(messages_filtered), # todo
+        [datetime.now()] * len(messages_filtered), # todo
         [0] * len(messages_filtered), # todo
         messages_filtered)
         )
@@ -69,9 +71,9 @@ def build_plantuml_from_messages(messages_list):
     # transactions
     for participant, datetime_, send_receive, binary_message in messages_list:
         arrow_str = '->' if send_receive == 1 else '<-'
-        diagram_lines.append(f'{participant} {arrow_str} {fints_name}: {datetime_}\n')
+        diagram_lines.append(f'\n{participant} {arrow_str} {fints_name}: {datetime_}\n')
         diagram_lines.append(f'note over {participant}\n')
-        diagram_lines.append(binary_message.decode('latin-1'))
+        diagram_lines.append(binary_message.decode('latin-1')) #todo split overly long lines
         diagram_lines.append('\nend note\n')
     # end/footer
     diagram_lines.append('\n@enduml\n')
@@ -80,7 +82,6 @@ def build_plantuml_from_messages(messages_list):
     return diag_str
 
 def collect_messages_from_files(filenames):
-    # also add sender to the list (smpc or kernel)
     messages = []
     for filename in filenames:
         if filename.endswith('.hbc'):
