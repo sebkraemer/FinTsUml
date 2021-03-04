@@ -37,15 +37,21 @@ def get_parts_from_sfpc(filename):
 
     #hbciRegex = re.compile(b"(?:(?:.\r?\n)*?)(?:Start HBCI message.*?\r?\n(.*?)\r?\nEnd HBCI message)+", re.DOTALL)
     hbciRegex = re.compile(br'(?:.\r?\n)*?(?:Start HBCI message;\d+;(?P<send_receive_flag>[01]);\w+: (?P<time>[\d:.,]*);.*?\r?\n(?P<hbci>.*?)\r?\nEnd HBCI message)+', re.DOTALL)
-    messages = hbciRegex.findall(binary_message)
-    if not messages:
+    matches_it = hbciRegex.finditer(binary_message)
+    if not matches_it:
         raise RuntimeError("could not extract message data from file " + filename)
-    transaction_times = [datetime.strptime(m['time'], '%H:%M:%S.%f') for m in messages]
-    messages_filtered = [filter_hbci(m[2]) for m in messages]
+
+    send_receive_flags = []
+    transaction_times = []
+    messages_filtered = []
+    for m in matches_it:
+        send_receive_flags.append(int(m['send_receive_flag'].decode('utf-8')))
+        transaction_times.append(datetime.strptime(m['time'].decode('utf-8'), '%H:%M:%S.%f'))
+        messages_filtered.append(filter_hbci(m['hbci']))
     
     return list(zip(
         transaction_times,
-        [0] * len(messages_filtered), # todo
+        send_receive_flags,
         messages_filtered)
         )
 
