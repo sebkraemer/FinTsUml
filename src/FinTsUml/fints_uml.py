@@ -4,6 +4,7 @@ import re
 import requests
 import sys
 
+
 def filter_hbci(binary_message):
     # according to "FinTS-Basiszeichensätze" in Formals
     invalidHbciChars = re.compile(b'[^\x20-\x7E\xA1-\xFF\x0A\x0D]')
@@ -13,12 +14,13 @@ def filter_hbci(binary_message):
     separateSegments = re.compile(b'\'(?=.)')
     filtered = re.sub(separateSegments, b'\'\n', filtered)
     return filtered
-    
+
+
 def get_parts_from_sfbk(filename):
-    '''gets time, send/receive info and message content from kernel trace file
-    
+    """gets time, send/receive info and message content from kernel trace file
+
     returns list of tuples in format (datetime, 0/1, message)
-    '''
+    """
     r = re.compile(r'\d+_(?P<time>\d{8,8})_\d+_(?P<send_receive_flag>[rs])r\.hbc')
     match = r.match(os.path.split(filename)[-1])
     if match is None:
@@ -31,12 +33,16 @@ def get_parts_from_sfbk(filename):
 
     return (dt, send_receive, binary_message)
 
+
 def get_parts_from_sfpc(filename):
     f = open(filename, 'rb')
     binary_message = filter_hbci(f.read())
 
-    #hbciRegex = re.compile(b"(?:(?:.\r?\n)*?)(?:Start HBCI message.*?\r?\n(.*?)\r?\nEnd HBCI message)+", re.DOTALL)
-    hbciRegex = re.compile(br'(?:.\r?\n)*?(?:Start HBCI message;\d+;(?P<send_receive_flag>[01]);\w+: (?P<time>[\d:.,]*);.*?\r?\n(?P<hbci>.*?)\r?\nEnd HBCI message)+', re.DOTALL)
+    # hbciRegex = re.compile(b"(?:(?:.\r?\n)*?)(?:Start HBCI message.*?\r?\n(.*?)\r?\nEnd HBCI message)+", re.DOTALL)
+    hbciRegex = re.compile(
+        br'(?:.\r?\n)*?(?:Start HBCI message;\d+;(?P<send_receive_flag>[01]);\w+: (?P<time>[\d:.,]*);.*?\r?\n(?P<hbci>.*?)\r?\nEnd HBCI message)+',
+        re.DOTALL,
+    )
     matches_it = hbciRegex.finditer(binary_message)
     if not matches_it:
         raise RuntimeError("could not extract message data from file " + filename)
@@ -48,12 +54,8 @@ def get_parts_from_sfpc(filename):
         send_receive_flags.append(int(m['send_receive_flag'].decode('utf-8')))
         transaction_times.append(datetime.strptime(m['time'].decode('utf-8'), '%H:%M:%S.%f'))
         messages_filtered.append(filter_hbci(m['hbci']))
-    
-    return list(zip(
-        transaction_times,
-        send_receive_flags,
-        messages_filtered)
-        )
+
+    return list(zip(transaction_times, send_receive_flags, messages_filtered))
 
 
 def get_image_from_plantuml(plantuml_src, file_format):
@@ -64,6 +66,7 @@ def get_image_from_plantuml(plantuml_src, file_format):
     print(r.status_code)
     r.raise_for_status()
     return r.content
+
 
 def build_plantuml_from_messages(messages_list):
     # regroups the participants in its own list and removes duplicates via set
@@ -81,13 +84,14 @@ def build_plantuml_from_messages(messages_list):
         arrow_str = '->' if send_receive == 1 else '<-'
         diagram_lines.append(f'\n{participant} {arrow_str} {fints_name}: {datetime_}\n')
         diagram_lines.append(f'note over {participant}\n')
-        diagram_lines.append(binary_message.decode('latin-1')) #todo split overly long lines
+        diagram_lines.append(binary_message.decode('latin-1'))  # todo split overly long lines
         diagram_lines.append('\nend note\n')
     # end/footer
     diagram_lines.append('\n@enduml\n')
 
     diag_str = ''.join(diagram_lines)
     return diag_str
+
 
 def collect_messages_from_files(filenames):
     messages = []
@@ -122,8 +126,9 @@ def run_pipeline(filenames):
 def main():
     if len(sys.argv) < 2:
         print("missing file name(s)")
-        sys.exit(1)        
+        sys.exit(1)
     run_pipeline(sys.argv[1:])
+
 
 if __name__ == "__main__":
     main()
