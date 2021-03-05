@@ -1,3 +1,5 @@
+![https://github.com/sebkraemer/FinTsUml/actions/workflows/fints_uml.yml](https://github.com/sebkraemer/FinTsUml/actions/workflows/fints_uml.yml/badge.svg)
+
 # About
 
 This program supports conversion from [Star Money](https://starmoney.de/) transaction protocols
