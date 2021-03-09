@@ -99,7 +99,7 @@ def collect_messages_from_files(filenames):
         elif filename.endswith(".pro"):
             for message in get_parts_from_sfpc(filename):
                 messages.append(tuple(("SMPC",)) + message)
-    # todo sort by timestamp
+    messages.sort(key=lambda components: components[1])  # sort by date
     return messages
 
 
