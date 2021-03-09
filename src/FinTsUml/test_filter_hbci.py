@@ -1,7 +1,7 @@
 import pytest
 from fints_uml import filter_hbci
 
-ESCAPE_CHAR = b'.'
+ESCAPE_CHAR = b"."
 
 
 def __int_to_binary_char__(char_as_ord):
@@ -12,13 +12,13 @@ def __int_to_binary_char__(char_as_ord):
 
 
 def test_whitespace_unchanged():
-    whitspace_chars = b'\r\n'
+    whitspace_chars = b"\r\n"
     assert filter_hbci(whitspace_chars) == whitspace_chars
 
 
 @pytest.mark.parametrize(
     "alphanumeric_char",
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
 )
 def test_alphanumeric_valid(alphanumeric_char):
     alphanumeric_char_b = alphanumeric_char.encode()
@@ -35,15 +35,15 @@ def test_valid_special_signs(special_char):
 
 
 def test_umlauts_valid():
-    umlaut_chars = b'\xC4\xE4\xD6\xF6\xDC\xFC\xDF'  # äÄüÜöÖß
+    umlaut_chars = b"\xC4\xE4\xD6\xF6\xDC\xFC\xDF"  # äÄüÜöÖß
     assert filter_hbci(umlaut_chars) == umlaut_chars
 
 
 @pytest.mark.skip(reason="not implemented")
 def test_pipe_invalid():
-    assert filter_hbci(b'|') == ESCAPE_CHAR
+    assert filter_hbci(b"|") == ESCAPE_CHAR
 
 
 @pytest.mark.skip(reason="not implemented")
 def test_tilde_invalid():
-    assert filter_hbci(b'~') == ESCAPE_CHAR
+    assert filter_hbci(b"~") == ESCAPE_CHAR
