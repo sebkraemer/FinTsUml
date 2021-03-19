@@ -22,7 +22,7 @@ def get_parts_from_sfbk(filename):
 
     returns list of tuples in format (datetime, 0/1, message)
     """
-    r = re.compile(r"\d+_(?P<time>\d{8,8})_\d+_(?P<send_receive_flag>[rs])r\.hbc")
+    r = re.compile(r"\d+_(?P<time>\d{8,8})_\d+(?:_)?(?P<send_receive_flag>[rs])r\.hbc")
     match = r.match(os.path.split(filename)[-1])
     if match is None:
         raise RuntimeError("invalid filename pattern from " + filename)
