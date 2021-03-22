@@ -1,4 +1,5 @@
 from datetime import datetime
+import glob
 import os
 import re
 import requests
@@ -121,11 +122,18 @@ def run_pipeline(filenames):
     save_image.close()
 
 
+def __get_filenames__(console_args):
+    filenames = [filename for arg in console_args for filename in glob.glob(arg)]
+    return sorted(filenames)
+
+
 def main():
     if len(sys.argv) < 2:
         print("missing file name(s)")
         sys.exit(1)
-    run_pipeline(sys.argv[1:])
+
+    filenames = __get_filenames__(sys.argv[1:])
+    run_pipeline(filenames)
 
 
 if __name__ == "__main__":
