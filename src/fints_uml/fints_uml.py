@@ -132,7 +132,12 @@ def main():
         print("missing file name(s)")
         sys.exit(1)
 
-    filenames = __get_filenames__(sys.argv[1:])
+    file_list = sys.argv[1:]
+    filenames = __get_filenames__(file_list)
+    if not filenames:
+        print(f"no files found looking for {file_list}")
+        sys.exit(1)
+
     run_pipeline(filenames)
 
 
