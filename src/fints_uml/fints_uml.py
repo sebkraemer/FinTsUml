@@ -104,13 +104,12 @@ def collect_messages_from_files(filenames):
     return messages
 
 
-def run_pipeline(filenames):
+def run_pipeline(filenames, out_filename_base):
     print(f"processing {filenames}")
 
     messages = collect_messages_from_files(filenames)
     plantuml_src = build_plantuml_from_messages(messages)
 
-    out_filename_base = "fintsUml-generated"
     file_puml = open(out_filename_base + ".plantuml", "w")
     file_puml.write(plantuml_src)
     file_puml.close()
@@ -138,7 +137,8 @@ def main():
         print(f"no files found looking for {file_list}")
         sys.exit(1)
 
-    run_pipeline(filenames)
+    out_filename_base = os.path.split(filenames[0])[0] + os.path.sep + "fintsUml-generated"
+    run_pipeline(filenames, out_filename_base)
 
 
 if __name__ == "__main__":
