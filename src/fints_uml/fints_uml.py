@@ -126,12 +126,12 @@ def __get_filenames__(console_args):
     return sorted(filenames)
 
 
-def main():
-    if len(sys.argv) < 2:
+def main(argv):
+    if len(argv) < 2:
         print("missing file name(s)")
         sys.exit(1)
 
-    file_list = sys.argv[1:]
+    file_list = argv[1:]
     filenames = __get_filenames__(file_list)
     if not filenames:
         print(f"no files found looking for {file_list}")
@@ -142,4 +142,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)

@@ -2,7 +2,7 @@
 -------------------
 * correctly add 'requests' dependency
 * add 'dev' installation group to setup.cfg as documentation instead of requirements file
-
+* make fints_uml actually work as package, as advertised in the README
 
 0.1.0 (2021-04-05)
 -------------------
