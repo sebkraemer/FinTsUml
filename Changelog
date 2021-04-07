@@ -1,3 +1,8 @@
+0.1.1 (2021-04-08)
+-------------------
+* correctly add 'requests' dependency
+* add 'dev' installation group to setup.cfg as documentation instead of requirements file
+
 
 0.1.0 (2021-04-05)
 -------------------
