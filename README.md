@@ -30,6 +30,6 @@ Developed in MacOS with python 3.8.
 
 You need `requests` for running and `pytest` for testing 😀
 
-More references info can be gathered from `setup.cfg` and the [Github actions files](https://github.com/sebkraemer/FinTsUml/tree/main/.github/workflows)
+More reference info can be gathered from `setup.cfg` and the [Github actions files](https://github.com/sebkraemer/FinTsUml/tree/main/.github/workflows)
 
-Feel free to send an email or open issues or even PRs, I'll be happy to talk about your feedback and ideas.
+Feel free to contact me or open issues or even PRs, I'll be happy to talk about your feedback and ideas.
